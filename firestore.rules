@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	
+    match /{document=**} {
+    allow read: if true ;
+  }
+
+  match /users/{userId}{
+    allow create, read: if request.auth.uid != null ;
+    allow update, delete: if request.auth.uid == resource.data.id;
+  }
+
+  match /users/{userId}/interactions/{interactionsId}{
+    allow read, write: if request.auth.uid != null ; 
+  }
+
+  match /testBikes/{bikeId}{
+    allow write: if request.auth.uid == resource.data.ownerUid ;
+    allow update: if request.resource.data.secretKey == resource.data.secretKey ;
+    }
+
+  match /testPosts/{postId}{
+      allow read, create: if request.auth.uid != null ;
+      allow update, delete: if request.auth.uid == resource.data.ownerUid ;
+    }
+
+  match /testPosts/{postId}/interactions/{interactionsId}{
+    allow read, write: if request.auth.uid != null ;
+  }
+
+  match /Chats/{chatId}{
+    allow read, write: if true ;
+  }
+
+  match /UserChats/{userChatId}{
+    allow read , write: if true ;
+  }
+
+  }
+}
